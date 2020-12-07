@@ -23,7 +23,8 @@ public class Controller {
         if (enteredText == "") {
             return;
         }
-        messagesArea.appendText(enteredText + "\n");
+        messagesArea.appendText(enteredText);
+        messagesArea.appendText(System.lineSeparator());
         messageText.clear();
     }
 }
