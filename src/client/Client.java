@@ -8,7 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+public class Client extends Application {
 
     @Override
     public void stop() throws Exception {

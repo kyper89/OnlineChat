@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Scanner;
 
-public class EchoServer {
+public class Server {
 
     public static final int SERVER_PORT = 8189;
 
@@ -20,14 +21,22 @@ public class EchoServer {
             DataInputStream in = new DataInputStream(clientSocket.getInputStream());
             DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
 
-            while (true) {
-                String str = in.readUTF();
-                if (str.equals("/end")) {
-                    break;
+            Thread threadListen = new Thread(()-> {
+                try {
+                    printMessage(in);
+                } catch (IOException e) {
+                    System.err.println("Connection has been closed!");
+                    e.printStackTrace();
                 }
-                out.writeUTF("Echo: " + str);
+            });
+
+            threadListen.start();
+
+            Scanner scanner = new Scanner(System.in);
+            while (true) {
+                out.writeUTF(scanner.next());
             }
-            System.out.println("Server has been closed");
+
         } catch (SocketException e) {
             System.err.println("Server port is already opened!");
             e.printStackTrace();
@@ -36,6 +45,13 @@ public class EchoServer {
             System.err.println("Connection has been closed!");
             e.printStackTrace();
         }
-
     }
+
+    private static void printMessage(DataInputStream in ) throws IOException {
+        while (true) {
+            String message = in.readUTF();
+            System.out.println(message);
+        }
+    }
+
 }

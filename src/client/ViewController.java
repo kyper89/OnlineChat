@@ -35,7 +35,7 @@ public class ViewController {
         } catch (IOException e) {
             e.printStackTrace();
             String errorMessage = "Failed to send message";
-            Main.showNetworkError(e.getMessage(), errorMessage);
+            Client.showNetworkError(e.getMessage(), errorMessage);
         }
     }
 
