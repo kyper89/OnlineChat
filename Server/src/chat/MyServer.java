@@ -76,6 +76,15 @@ public class MyServer {
         }
     }
 
+    public void broadcastMessage(String message, ClientHandler sender, String recipientNick) throws IOException {
+        ClientHandler recipient = getClientByNick(recipientNick);
+        if (recipient == null) {
+            sender.sendMessage("Пользователь с ником '" + recipientNick + "' не в сети");
+        } else {
+            recipient.sendMessage(message);
+        }
+    }
+
     public synchronized void subscribe(ClientHandler handler) {
         clients.add(handler);
     }
@@ -95,5 +104,14 @@ public class MyServer {
             }
         }
         return false;
+    }
+
+    public synchronized ClientHandler getClientByNick(String nickname) {
+        for (ClientHandler client : clients) {
+            if (client.getNickname().equals(nickname)) {
+                return client;
+            }
+        }
+        return null;
     }
 }
