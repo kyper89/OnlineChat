@@ -2,6 +2,7 @@ package chat;
 
 import auth.AuthService;
 import auth.BaseAuthService;
+import clientserver.Command;
 import handler.ClientHandler;
 
 import java.io.IOException;
@@ -67,12 +68,17 @@ public class MyServer {
     }
 
     public synchronized void broadcastMessage(String message, ClientHandler sender) throws IOException {
+
         for (ClientHandler client : clients) {
             if (client == sender) {
                 continue;
             }
 
-            client.sendMessage(message);
+            if (sender == null) {
+                client.sendMessage(message);
+            } else {
+                client.sendMessage(sender.getNickname(), message);
+            }
         }
     }
 
@@ -85,12 +91,25 @@ public class MyServer {
         }
     }
 
-    public synchronized void subscribe(ClientHandler handler) {
+    public synchronized void subscribe(ClientHandler handler) throws IOException {
         clients.add(handler);
+        notifyClientsUsersListUpdated(clients);
     }
 
-    public synchronized void unsubscribe(ClientHandler handler) {
+    public synchronized void unsubscribe(ClientHandler handler) throws IOException{
         clients.remove(handler);
+        notifyClientsUsersListUpdated(clients);
+    }
+
+    private void notifyClientsUsersListUpdated(List<ClientHandler> clients) throws IOException {
+        List<String> usernames = new ArrayList<>();
+        for (ClientHandler client : clients) {
+            usernames.add(client.getNickname());
+        }
+
+        for (ClientHandler client : clients) {
+            client.sendCommand(Command.updateUsersListCommand(usernames));
+        }
     }
 
     public AuthService getAuthService() {
@@ -114,4 +133,5 @@ public class MyServer {
         }
         return null;
     }
+
 }

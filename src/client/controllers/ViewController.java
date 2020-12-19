@@ -4,10 +4,8 @@ import client.Client;
 import client.Network;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 
@@ -26,11 +24,34 @@ public class ViewController {
     private TextArea messagesArea;
 
     private Network network;
+    private String selectedRecipient;
 
     @FXML
     public void initialize() {
         usersList.setItems(FXCollections.observableArrayList(Client.USERS_TEST_DATA));
-        textField.requestFocus();
+
+        usersList.setCellFactory(lv -> {
+            MultipleSelectionModel<String> selectionModel = usersList.getSelectionModel();
+            ListCell<String> cell = new ListCell<>();
+            cell.textProperty().bind(cell.itemProperty());
+            cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+                usersList.requestFocus();
+                if (! cell.isEmpty()) {
+                    int index = cell.getIndex();
+                    if (selectionModel.getSelectedIndices().contains(index)) {
+                        selectionModel.clearSelection(index);
+                        selectedRecipient = null;
+                    } else {
+                        selectionModel.select(index);
+                        selectedRecipient = cell.getItem();
+                    }
+                    event.consume();
+                }
+            });
+            return cell ;
+        });
+
+        //textField.requestFocus();
     }
 
     @FXML
@@ -43,7 +64,11 @@ public class ViewController {
         textField.clear();
 
         try {
-            network.sendMessage(enteredText);
+            if (selectedRecipient != null) {
+                network.sendPrivateMessage(selectedRecipient, enteredText);
+            } else {
+                network.sendMessage(enteredText);
+            }
         } catch (IOException e) {
             e.printStackTrace();
             String errorMessage = "Failed to send message";

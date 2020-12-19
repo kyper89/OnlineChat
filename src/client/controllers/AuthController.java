@@ -29,9 +29,8 @@ public class AuthController {
             return;
         }
 
-        String authCommandMessage = String.format("%s %s %s", AUTH_CMD, login, password);
         try {
-            network.sendMessage(authCommandMessage);
+            network.sendAuthMessage(login, password);
         } catch (IOException e) {
             Client.showNetworkError(e.getMessage(), "Auth error!");
             e.printStackTrace();

@@ -3,10 +3,10 @@ package client;
 import client.controllers.AuthController;
 import client.controllers.ViewController;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-
 import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
@@ -24,6 +24,10 @@ public class Client extends Application {
     private Stage authDialogStage;
     private Network network;
     private ViewController viewController;
+
+    public void updateUsers(List<String> users) {
+        viewController.usersList.setItems(FXCollections.observableList(users));
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception{
