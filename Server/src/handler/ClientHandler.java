@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static clientserver.Command.*;
 
@@ -50,6 +52,9 @@ public class ClientHandler {
     }
 
     private void authentication() throws IOException {
+
+        waitAuth();
+
         while (true) {
             Command command = readCommand();
             if (command == null) {
@@ -79,6 +84,25 @@ public class ClientHandler {
                 return;
             }
         }
+    }
+
+    private void waitAuth() {
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                if (nickname == null) {
+                    try {
+                        closeConnection();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        System.err.println("Ошибка закрытия соединения по истечению времени ожидания аутентификации");
+                    }
+                }
+            }
+        };
+
+        new Timer().schedule(task, 120000L);
     }
 
     public void sendCommand(Command command) throws IOException {
@@ -137,7 +161,7 @@ public class ClientHandler {
     }
 
     public void sendMessage(String sender, String message) throws IOException {
-        sendCommand(clientMessageCommand(message, sender));
+        sendCommand(clientMessageCommand(sender, message));
     }
 
     public String getNickname() {

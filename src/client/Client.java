@@ -56,7 +56,7 @@ public class Client extends Application {
 
         primaryStage.setOnCloseRequest(event -> {
             try {
-                network.sendMessage("/end");
+                network.sendEndMessage();
             } catch (IOException e) {
                 e.printStackTrace();
             }

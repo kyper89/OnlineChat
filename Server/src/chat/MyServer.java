@@ -87,7 +87,7 @@ public class MyServer {
         if (recipient == null) {
             sender.sendMessage("Пользователь с ником '" + recipientNick + "' не в сети");
         } else {
-            recipient.sendMessage(message);
+            recipient.sendMessage(sender.getNickname(), message);
         }
     }
 

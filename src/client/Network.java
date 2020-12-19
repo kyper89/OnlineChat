@@ -143,6 +143,10 @@ public class Network {
         sendCommand(authCommand(login, password));
     }
 
+    public void sendEndMessage() throws IOException {
+        sendCommand(endCommand());
+    }
+
     public void close() {
         try {
             socket.close();

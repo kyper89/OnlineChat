@@ -46,6 +46,9 @@ public class ViewController {
                         selectedRecipient = cell.getItem();
                     }
                     event.consume();
+                } else {
+                    selectionModel.clearSelection();
+                    selectedRecipient = null;
                 }
             });
             return cell ;
